@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './AuthorQuiz.css';
 
 const Hero = () =>
@@ -9,23 +10,48 @@ const Hero = () =>
 	</div>
 </div>
 
-const Turn = ({ author, books }) =>
-<div className="row turn" style={{ backgroundColor: 'white' }}>
-	<div className="col-4 offset-1">
-		<img src={author.imageUrl} alt="Author" className="authorImage"/>
-	</div>
-	<div className="col-6">
-		{books.map((title) => <Book title={title} key={title} />)}
-	</div>
-</div>
+const Turn = ({ author, books, answerStatus = 'none', onAnswerSelected }) => {
+	const backgroundColor = getBackgroundColor(answerStatus);
 
-const Book = ({title}) =>
-<div className="answer">
+return (
+	<div className="row turn" style={{ backgroundColor }}>
+		<div className="col-4 offset-1">
+			<img src={author.imageUrl} alt="Author" className="authorImage"/>
+		</div>
+		<div className="col-6">
+			{books.map((title) => <Book title={title} key={title} onClick={onAnswerSelected} />)}
+		</div>
+	</div>
+);
+}
+
+Turn.propTypes = {
+	author: PropTypes.shape({
+		name: PropTypes.string.isRequired,
+		imageUrl: PropTypes.string.isRequired,
+		imageSource: PropTypes.string.isRequired,
+		books: PropTypes.arrayOf(PropTypes.string).isRequired
+	}),
+	books: PropTypes.arrayOf(PropTypes.string).isRequired,
+	onAnswerSelected: PropTypes.func.isRequired,
+	answerStatus: PropTypes.string.isRequired
+}
+
+function getBackgroundColor(answerStatus) {
+	return {
+		none: 'white',
+		correct: 'green',
+		incorrect: 'red'
+	}[answerStatus];
+}
+
+const Book = ({title, onClick}) =>
+<div className="answer" onClick={onClick.bind(null, title)}>
 	<h4>{title}</h4>
 </div>
 
 
-function Continue() { return null; }
+const Continue = () => null;
 
 const Footer = () =>
 <div id="footer" className="row">
@@ -38,10 +64,10 @@ const Footer = () =>
 	</div>
 </div>
 
-const AuthorQuiz = ({ turnData }) =>
+const AuthorQuiz = ({ turnData, answerStatus, onAnswerSelected }) =>
 <div className="container-fluid">
 	<Hero/>
-	<Turn {...turnData}/>
+	<Turn {...turnData} answerStatus={answerStatus} onAnswerSelected={onAnswerSelected}/>
 	<Continue/>
 	<Footer/>
 </div>

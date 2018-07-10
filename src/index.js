@@ -61,11 +61,21 @@ function getTurnData(authors) {
 }
 
 const state = {
-	turnData: getTurnData(authors)
+	turnData: getTurnData(authors),
+	answerStatus: 'none'
 };
 
-const element = <AuthorQuiz {...state}/>
-const root = document.getElementById('root');
+function onAnswerSelected(answer) {
+	let isCorrect = state.turnData.author.books.includes(answer);
+	state.answerStatus = isCorrect ? 'correct' : 'incorrect';
+	render();
+}
 
-ReactDOM.render(element, root);
+function render() {
+	const element = <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>
+	const root = document.getElementById('root');
+	ReactDOM.render(element, root);
+}
+
+render();
 registerServiceWorker();
