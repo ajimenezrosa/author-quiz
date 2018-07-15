@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import './AuthorQuiz.css';
 
 const Hero = () =>
@@ -69,6 +71,9 @@ const AuthorQuiz = ({ turnData, answerStatus, onAnswerSelected }) =>
 	<Hero/>
 	<Turn {...turnData} answerStatus={answerStatus} onAnswerSelected={onAnswerSelected}/>
 	<Continue/>
+	<p>
+		<Link to="/add">Add an author</Link>
+	</p>
 	<Footer/>
 </div>
 

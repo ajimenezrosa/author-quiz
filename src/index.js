@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { chain, sample } from 'lodash';
+import { BrowserRouter, Route, withRouter } from 'react-router-dom';
+
 import './index.css';
+import AddAuthorForm from './AddAuthorForm/AddAuthorForm';
 import AuthorQuiz from './AuthorQuiz/AuthorQuiz';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -71,10 +74,26 @@ function onAnswerSelected(answer) {
 	render();
 }
 
+function App() {
+	return <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>;
+}
+
+const AuthorWrapper = withRouter(({ history }) =>
+	<AddAuthorForm onAddAuthor={(author) => {
+		authors.push(author);
+		history.push('/');
+	}}/>
+);
+
 function render() {
-	const element = <AuthorQuiz {...state} onAnswerSelected={onAnswerSelected}/>
-	const root = document.getElementById('root');
-	ReactDOM.render(element, root);
+	const routes = <BrowserRouter>
+		<React.Fragment>
+			<Route exact path="/" component={App}/>
+			<Route path="/add" component={AuthorWrapper}/>
+		</React.Fragment>
+	</BrowserRouter>
+
+	ReactDOM.render(routes, document.getElementById('root'));
 }
 
 render();
