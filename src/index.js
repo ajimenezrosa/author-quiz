@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { BrowserRouter, Route, withRouter } from 'react-router-dom';
+import { createStore } from 'redux';
 
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
@@ -9,6 +11,9 @@ import AddAuthorForm from './AddAuthorForm/AddAuthorForm';
 import AuthorQuiz from './AuthorQuiz/AuthorQuiz';
 import { getTurnData, addAuthor } from './author-data';
 
+const reducer = (state, action) => state;
+
+const store = createStore(reducer);
 let state = resetState();
 
 function resetState() {
@@ -24,22 +29,25 @@ function onAnswerSelected(answer) {
 	render();
 }
 
-function AuthorQuizWrapper() {
-	return <AuthorQuiz
+const AuthorQuizWrapper = () =>
+<Provider store={store}>
+	<AuthorQuiz
 		{...state}
 		onAnswerSelected={onAnswerSelected}
 		onContinue={() => {
 			state = resetState();
 			render();
 		}}
-	/>;
-}
+	/>
+</Provider>;
 
 const AuthorFormWrapper = withRouter(({ history }) =>
-	<AddAuthorForm onAddAuthor={(author) => {
-		addAuthor(author);
-		history.push('/');
-	}}/>
+	<Provider store={store}>
+		<AddAuthorForm onAddAuthor={(author) => {
+			addAuthor(author);
+			history.push('/');
+		}}/>
+	</Provider>
 );
 
 function render() {
