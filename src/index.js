@@ -9,36 +9,32 @@ import registerServiceWorker from './registerServiceWorker';
 
 import AddAuthorForm from './AddAuthorForm/AddAuthorForm';
 import AuthorQuiz from './AuthorQuiz/AuthorQuiz';
-import { getTurnData, addAuthor } from './author-data';
+import { authors, getTurnData, addAuthor } from './author-data';
 
-const reducer = (state, action) => state;
-
-const store = createStore(reducer);
-let state = resetState();
-
-function resetState() {
-	return {
-		turnData: getTurnData(),
-		answerStatus: 'none'
-	};
+const initialState = {
+	authors,
+	turnData: getTurnData(authors),
+	answerStatus: 'none'
 }
+const actionHandlers = {
+	'ANSWER_SELECTED': (state, action) => Object.assign({}, state, { answerStatus: getAnswerStatus(action.answer, state.turnData) }),
+	'CONTINUE': (state, action) => Object.assign({}, state, { answerStatus: 'none', turnData: getTurnData(state.authors) })
+};
+const reducer = (state = initialState, action) => {
+	let actionHandler = actionHandlers[action.type];
 
-function onAnswerSelected(answer) {
-	let isCorrect = state.turnData.author.books.includes(answer);
-	state.answerStatus = isCorrect ? 'correct' : 'incorrect';
-	render();
+	return (actionHandler && actionHandler(state, action)) || state;
+};
+const store = createStore(reducer);
+
+function getAnswerStatus(answer, turnData) {
+	let isCorrect = turnData.author.books.includes(answer);
+	return isCorrect ? 'correct' : 'incorrect';
 }
 
 const AuthorQuizWrapper = () =>
 <Provider store={store}>
-	<AuthorQuiz
-		{...state}
-		onAnswerSelected={onAnswerSelected}
-		onContinue={() => {
-			state = resetState();
-			render();
-		}}
-	/>
+	<AuthorQuiz />
 </Provider>;
 
 const AuthorFormWrapper = withRouter(({ history }) =>
@@ -50,16 +46,13 @@ const AuthorFormWrapper = withRouter(({ history }) =>
 	</Provider>
 );
 
-function render() {
-	const routes = <BrowserRouter>
-		<React.Fragment>
-			<Route exact path="/" component={AuthorQuizWrapper}/>
-			<Route path="/add" component={AuthorFormWrapper}/>
-		</React.Fragment>
-	</BrowserRouter>
+const app = <BrowserRouter>
+	<React.Fragment>
+		<Route exact path="/" component={AuthorQuizWrapper}/>
+		<Route path="/add" component={AuthorFormWrapper}/>
+	</React.Fragment>
+</BrowserRouter>
 
-	ReactDOM.render(routes, document.getElementById('root'));
-}
+ReactDOM.render(app, document.getElementById('root'));
 
-render();
 registerServiceWorker();

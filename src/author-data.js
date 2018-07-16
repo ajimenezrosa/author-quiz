@@ -1,6 +1,6 @@
 import { chain, sample } from 'lodash';
 
-const authors = [
+export const authors = [
 	{
 		name: 'Mark Twain',
 		imageUrl: 'images/authors/marktwain.jpg',
@@ -47,7 +47,7 @@ function getTurnBooks(authors) {
 		.value();
 }
 
-export function getTurnData() {
+export function getTurnData(authors) {
 	const books = getTurnBooks(authors);
 	const answer = sample(books);
 	const author = authors.find((a) => a.books.includes(answer));
