@@ -26,7 +26,10 @@ const reducer = (state = initialState, action) => {
 
 	return (actionHandler && actionHandler(state, action)) || state;
 };
-const store = createStore(reducer);
+const store = createStore(
+	reducer,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 function getAnswerStatus(answer, turnData) {
 	let isCorrect = turnData.author.books.includes(answer);
