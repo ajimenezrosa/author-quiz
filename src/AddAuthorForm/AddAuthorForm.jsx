@@ -1,5 +1,7 @@
 import { omit } from 'lodash';
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import './AddAuthorForm.css';
 
@@ -74,11 +76,20 @@ class Form extends React.Component {
 	}
 }
 
-function AddAuthorForm({ match, onAddAuthor }) {
+function AddAuthorForm({ onAddAuthor }) {
 	return <div className="add-author-form">
 		<h1>Add Author</h1>
 		<Form onAddAuthor={onAddAuthor}/>
 	</div>;
 }
 
-export default AddAuthorForm;
+const mapDispatchToProps = (dispatch, props) => {
+	return {
+		onAddAuthor: (author) => {
+			dispatch({ type: 'ADD_AUTHOR', author });
+			props.history.push('/');
+		}
+	};
+};
+
+export default withRouter(connect(() => Object.assign({}), mapDispatchToProps)(AddAuthorForm));

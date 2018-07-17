@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Route, withRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { createStore } from 'redux';
 
 import './index.css';
@@ -9,7 +9,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 import AddAuthorForm from './AddAuthorForm/AddAuthorForm';
 import AuthorQuiz from './AuthorQuiz/AuthorQuiz';
-import { authors, getTurnData, addAuthor } from './author-data';
+import { authors, getTurnData } from './author-data';
 
 const initialState = {
 	authors,
@@ -18,7 +18,8 @@ const initialState = {
 }
 const actionHandlers = {
 	'ANSWER_SELECTED': (state, action) => Object.assign({}, state, { answerStatus: getAnswerStatus(action.answer, state.turnData) }),
-	'CONTINUE': (state, action) => Object.assign({}, state, { answerStatus: 'none', turnData: getTurnData(state.authors) })
+	'CONTINUE': (state, action) => Object.assign({}, state, { answerStatus: 'none', turnData: getTurnData(state.authors) }),
+	'ADD_AUTHOR': (state, action) => Object.assign({}, state, { authors: state.authors.concat(action.author) })
 };
 const reducer = (state = initialState, action) => {
 	let actionHandler = actionHandlers[action.type];
@@ -37,14 +38,10 @@ const AuthorQuizWrapper = () =>
 	<AuthorQuiz />
 </Provider>;
 
-const AuthorFormWrapper = withRouter(({ history }) =>
-	<Provider store={store}>
-		<AddAuthorForm onAddAuthor={(author) => {
-			addAuthor(author);
-			history.push('/');
-		}}/>
-	</Provider>
-);
+const AuthorFormWrapper = () =>
+<Provider store={store}>
+	<AddAuthorForm />
+</Provider>
 
 const app = <BrowserRouter>
 	<React.Fragment>

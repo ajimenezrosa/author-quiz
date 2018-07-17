@@ -54,7 +54,3 @@ export function getTurnData(authors) {
 
 	return { books, author };
 }
-
-export function addAuthor(author) {
-	authors.push(author);
-}
